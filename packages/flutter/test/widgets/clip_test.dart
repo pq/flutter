@@ -396,7 +396,7 @@ void main() {
     );
     await expectLater(
       find.byType(RepaintBoundary).first,
-      matchesSkiaGoldFile('clip.ClipRectOverlay.png')
+      matchesSkiaGoldFile('clip.ClipRectOverlay.png'),
     );
   });
 
