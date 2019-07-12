@@ -1960,7 +1960,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.repaint_boundary_margin.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       // Regression test for how rendering with a pixel scale other than 1.0
@@ -1974,7 +1973,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.repaint_boundary_margin_small.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       await expectLater(
@@ -1986,7 +1984,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.repaint_boundary_margin_large.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       final Layer layerParent = layer.parent;
@@ -2005,7 +2002,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.repaint_boundary.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       // Verify that taking a screenshot didn't change the layers associated with
@@ -2026,7 +2022,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.repaint_boundary_margin.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       // Verify that taking a screenshot didn't change the layers associated with
@@ -2050,7 +2045,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.repaint_boundary_debugPaint.png',
           version: null,
         ),
-        skip: !isLinux,
       );
       // Verify that taking a screenshot with debug paint on did not change
       // the number of children the layer has.
@@ -2064,7 +2058,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.repaint_boundary.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       expect(renderObject.debugLayer, equals(layer));
@@ -2081,7 +2074,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.container.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       await expectLater(
@@ -2095,7 +2087,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.container_debugPaint.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       {
@@ -2119,7 +2110,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
             'inspector.container_debugPaint.png',
             version: null,
           ),
-          skip: !isLinux,
         );
         expect(container.debugNeedsLayout, isFalse);
       }
@@ -2135,7 +2125,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.container_small.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       await expectLater(
@@ -2149,7 +2138,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.container_large.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       // This screenshot will show the clip rect debug paint but no other
@@ -2165,7 +2153,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.clipRect_debugPaint.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       final Element clipRect = find.byType(ClipRRect).evaluate().single;
@@ -2185,7 +2172,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.clipRect_debugPaint_margin.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       // Verify we get the same image if we go through the service extension
@@ -2228,7 +2214,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.padding_debugPaint.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       // The bounds for this box crop its rendered content.
@@ -2243,7 +2228,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.sizedBox_debugPaint.png',
           version: 1,
         ),
-        skip: !isLinux,
       );
 
       // Verify that setting a margin includes the previously cropped content.
@@ -2259,7 +2243,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.sizedBox_debugPaint_margin.png',
           version: null,
         ),
-        skip: !isLinux,
       );
     }, skip: isBrowser);
 
@@ -2334,7 +2317,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.composited_transform.only_offsets.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       await expectLater(
@@ -2347,7 +2329,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.composited_transform.only_offsets_follower.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       await expectLater(
@@ -2356,7 +2337,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.composited_transform.only_offsets_small.png',
           version: 1,
         ),
-        skip: !isLinux,
       );
 
       await expectLater(
@@ -2369,7 +2349,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.composited_transform.only_offsets_target.png',
           version: null,
         ),
-        skip: !isLinux,
       );
     }, skip: isBrowser);
 
@@ -2445,7 +2424,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.composited_transform.with_rotations.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       await expectLater(
@@ -2458,7 +2436,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.composited_transform.with_rotations_small.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       await expectLater(
@@ -2471,7 +2448,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.composited_transform.with_rotations_target.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       await expectLater(
@@ -2484,7 +2460,6 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
           'inspector.composited_transform.with_rotations_follower.png',
           version: null,
         ),
-        skip: !isLinux,
       );
 
       // Make sure taking screenshots hasn't modified the positions of the
