@@ -7,11 +7,12 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/gestures.dart' show DragStartBehavior;
 
 // Start of block of code where widget creation location line numbers and
 // columns will impact whether tests pass.
@@ -95,6 +96,39 @@ class _ClockTextState extends State<ClockText> {
 
 // End of block of code where widget creation location line numbers and
 // columns will impact whether tests pass.
+
+// Class to enable building trees of nodes with cycles between properties of
+// nodes and the properties of those properties.
+// This exposed a bug in code serializing DiagnosticsNode objects that did not
+// handle these sorts of cycles robustly.
+class CyclicDiagnostic extends DiagnosticableTree {
+  CyclicDiagnostic(this.name);
+
+  // Field used to create cyclic relationships.
+  CyclicDiagnostic related;
+  final List<DiagnosticsNode> children = <DiagnosticsNode>[];
+
+  final String name;
+
+  @override
+  String toStringShort() => '$runtimeType-$name';
+
+  // We have to override toString to avoid the toString call itself triggering a
+  // stack overflow.
+  @override
+  String toString({ DiagnosticLevel minLevel = DiagnosticLevel.debug }) {
+    return toStringShort();
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<CyclicDiagnostic>('related', related));
+  }
+
+  @override
+  List<DiagnosticsNode> debugDescribeChildren() => children;
+}
 
 class _CreationLocation {
   const _CreationLocation({
@@ -1008,7 +1042,7 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
       // This RichText widget is created by the build method of the Text widget
       // thus the creation location is in text.dart not basic.dart
       final List<String> pathSegmentsFramework = Uri.parse(creationLocation['file']).pathSegments;
-      expect(pathSegmentsFramework.join('/'), endsWith('/packages/flutter/lib/src/widgets/text.dart'));
+      expect(pathSegmentsFramework.join('/'), endsWith('/flutter/lib/src/widgets/text.dart'));
 
       // Strip off /src/widgets/text.dart.
       final String pubRootFramework = '/' + pathSegmentsFramework.take(pathSegmentsFramework.length - 3).join('/');
@@ -1273,6 +1307,40 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
       }
     });
 
+    testWidgets('cyclic diagnostics regression test', (WidgetTester tester) async {
+      const String group = 'test-group';
+      final CyclicDiagnostic a = CyclicDiagnostic('a');
+      final CyclicDiagnostic b = CyclicDiagnostic('b');
+      a.related = b;
+      a.children.add(b.toDiagnosticsNode());
+      b.related = a;
+
+      final DiagnosticsNode diagnostic = a.toDiagnosticsNode();
+      final String id = service.toId(diagnostic, group);
+      final Map<String, Object> subtreeJson = await service.testExtension('getDetailsSubtree', <String, String>{'arg': id, 'objectGroup': group});
+      expect(subtreeJson['objectId'], equals(id));
+      expect(subtreeJson.containsKey('children'), isTrue);
+      final List<Object> propertiesJson = subtreeJson['properties'];
+      expect(propertiesJson.length, equals(1));
+      final Map<String, Object> relatedProperty = propertiesJson.first;
+      expect(relatedProperty['name'], equals('related'));
+      expect(relatedProperty['description'], equals('CyclicDiagnostic-b'));
+      expect(relatedProperty.containsKey('isDiagnosticableValue'), isTrue);
+      expect(relatedProperty.containsKey('children'), isFalse);
+      expect(relatedProperty.containsKey('properties'), isTrue);
+      final List<Object> relatedWidgetProperties = relatedProperty['properties'];
+      expect(relatedWidgetProperties.length, equals(1));
+      final Map<String, Object> nestedRelatedProperty = relatedWidgetProperties.first;
+      expect(nestedRelatedProperty['name'], equals('related'));
+      // Make sure we do not include properties or children for diagnostic a
+      // which we already included as the root node as that would indicate a
+      // cycle.
+      expect(nestedRelatedProperty['description'], equals('CyclicDiagnostic-a'));
+      expect(nestedRelatedProperty.containsKey('isDiagnosticableValue'), isTrue);
+      expect(nestedRelatedProperty.containsKey('properties'), isFalse);
+      expect(nestedRelatedProperty.containsKey('children'), isFalse);
+    });
+
     testWidgets('ext.flutter.inspector.getRootWidgetSummaryTree', (WidgetTester tester) async {
       const String group = 'test-group';
 
@@ -1534,7 +1602,7 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
       // This RichText widget is created by the build method of the Text widget
       // thus the creation location is in text.dart not basic.dart
       final List<String> pathSegmentsFramework = Uri.parse(creationLocation['file']).pathSegments;
-      expect(pathSegmentsFramework.join('/'), endsWith('/packages/flutter/lib/src/widgets/text.dart'));
+      expect(pathSegmentsFramework.join('/'), endsWith('/flutter/lib/src/widgets/text.dart'));
 
       // Strip off /src/widgets/text.dart.
       final String pubRootFramework = '/' + pathSegmentsFramework.take(pathSegmentsFramework.length - 3).join('/');
@@ -2262,6 +2330,71 @@ class TestWidgetInspectorService extends Object with WidgetInspectorService {
         skip: !isLinux,
       );
     }, skip: isBrowser);
+
+    testWidgets('ext.flutter.inspector.structuredErrors', (WidgetTester tester) async {
+      List<Map<Object, Object>> flutterErrorEvents = service.getEventsDispatched('Flutter.Error');
+      expect(flutterErrorEvents, isEmpty);
+
+      final FlutterExceptionHandler oldHandler = FlutterError.onError;
+
+      try {
+        // Enable structured errors.
+        expect(await service.testBoolExtension(
+            'structuredErrors', <String, String>{'enabled': 'true'}),
+            equals('true'));
+
+        // Create an error.
+        FlutterError.reportError(FlutterErrorDetailsForRendering(
+          library: 'rendering library',
+          context: ErrorDescription('during layout'),
+          exception: StackTrace.current,
+        ));
+
+        // Validate that we received an error.
+        flutterErrorEvents = service.getEventsDispatched('Flutter.Error');
+        expect(flutterErrorEvents, hasLength(1));
+
+        // Validate the error contents.
+        Map<Object, Object> error = flutterErrorEvents.first;
+        expect(error['description'], 'Exception caught by rendering library');
+        expect(error['children'], isEmpty);
+
+        // Validate that we received an error count.
+        expect(error['errorsSinceReload'], 0);
+
+        // Send a second error.
+        FlutterError.reportError(FlutterErrorDetailsForRendering(
+          library: 'rendering library',
+          context: ErrorDescription('also during layout'),
+          exception: StackTrace.current,
+        ));
+
+        // Validate that the error count increased.
+        flutterErrorEvents = service.getEventsDispatched('Flutter.Error');
+        expect(flutterErrorEvents, hasLength(2));
+        error = flutterErrorEvents.last;
+        expect(error['errorsSinceReload'], 1);
+
+        // Reload the app.
+        tester.binding.reassembleApplication();
+        await tester.pump();
+
+        // Send another error.
+        FlutterError.reportError(FlutterErrorDetailsForRendering(
+          library: 'rendering library',
+          context: ErrorDescription('during layout'),
+          exception: StackTrace.current,
+        ));
+
+        // And, validate that the error count has been reset.
+        flutterErrorEvents = service.getEventsDispatched('Flutter.Error');
+        expect(flutterErrorEvents, hasLength(3));
+        error = flutterErrorEvents.last;
+        expect(error['errorsSinceReload'], 0);
+      } finally {
+        FlutterError.onError = oldHandler;
+      }
+    });
 
     testWidgets('Screenshot of composited transforms - only offsets', (WidgetTester tester) async {
       // Composited transforms are challenging to take screenshots of as the
