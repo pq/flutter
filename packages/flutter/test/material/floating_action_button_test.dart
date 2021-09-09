@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// This file is run as part of a reduced test set in CI on Mac and Windows
+// machines.
+@Tags(<String>['reduced-test-set'])
+
 @TestOn('!chrome')
 import 'dart:ui';
 
@@ -1021,6 +1025,33 @@ void main() {
     expect(tester.getTopLeft(find.byKey(labelKey)).dx - tester.getTopRight(find.byKey(iconKey)).dx, spacing);
     expect(tester.getTopLeft(find.byKey(iconKey)).dx - tester.getTopLeft(find.byType(FloatingActionButton)).dx, padding.start);
     expect(tester.getTopRight(find.byType(FloatingActionButton)).dx - tester.getTopRight(find.byKey(labelKey)).dx, padding.end);
+  });
+
+  testWidgets('FloatingActionButton.extended can customize text style', (WidgetTester tester) async {
+    const Key labelKey = Key('label');
+    const TextStyle style = TextStyle(letterSpacing: 2.0);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          floatingActionButton: FloatingActionButton.extended(
+            label: const Text('', key: labelKey),
+            icon: const Icon(Icons.add),
+            extendedTextStyle: style,
+            onPressed: () {},
+          ),
+        ),
+      ),
+    );
+
+    final RawMaterialButton rawMaterialButton = tester.widget<RawMaterialButton>(
+      find.descendant(
+        of: find.byType(FloatingActionButton),
+        matching: find.byType(RawMaterialButton),
+      ),
+    );
+    // The color comes from the default color scheme's onSecondary value.
+    expect(rawMaterialButton.textStyle, style.copyWith(color: const Color(0xffffffff)));
   });
 
   group('feedback', () {

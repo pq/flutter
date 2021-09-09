@@ -138,8 +138,13 @@
 		97C146E61CF9000F007C117D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+<<<<<<<< HEAD:examples/image_list/ios/Runner.xcodeproj/project.pbxproj
+				LastUpgradeCheck = 0910;
+				ORGANIZATIONNAME = "The Flutter Authors";
+========
 				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "";
+>>>>>>>> upstream/master:dev/integration_tests/ios_platform_view_tests/ios/Runner.xcodeproj/project.pbxproj
 				TargetAttributes = {
 					97C146ED1CF9000F007C117D = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -147,7 +152,11 @@
 				};
 			};
 			buildConfigurationList = 97C146E91CF9000F007C117D /* Build configuration list for PBXProject "Runner" */;
+<<<<<<<< HEAD:examples/image_list/ios/Runner.xcodeproj/project.pbxproj
+			compatibilityVersion = "Xcode 3.2";
+========
 			compatibilityVersion = "Xcode 9.3";
+>>>>>>>> upstream/master:dev/integration_tests/ios_platform_view_tests/ios/Runner.xcodeproj/project.pbxproj
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -301,11 +310,16 @@
 				DEVELOPMENT_TEAM = S8QB4VV633;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
+<<<<<<<< HEAD:examples/image_list/ios/Runner.xcodeproj/project.pbxproj
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.imageLoading;
+========
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.flutter.platformview.platformviewTests;
+>>>>>>>> upstream/master:dev/integration_tests/ios_platform_view_tests/ios/Runner.xcodeproj/project.pbxproj
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -425,11 +439,16 @@
 				DEVELOPMENT_TEAM = S8QB4VV633;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
+<<<<<<<< HEAD:examples/image_list/ios/Runner.xcodeproj/project.pbxproj
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.imageLoading;
+========
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.flutter.platformview.platformviewTests;
+>>>>>>>> upstream/master:dev/integration_tests/ios_platform_view_tests/ios/Runner.xcodeproj/project.pbxproj
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -444,11 +463,16 @@
 				DEVELOPMENT_TEAM = S8QB4VV633;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
+<<<<<<<< HEAD:examples/image_list/ios/Runner.xcodeproj/project.pbxproj
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.imageLoading;
+========
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.flutter.platformview.platformviewTests;
+>>>>>>>> upstream/master:dev/integration_tests/ios_platform_view_tests/ios/Runner.xcodeproj/project.pbxproj
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

@@ -787,8 +787,15 @@ class KeyEventManager {
         assert(false, 'Should never encounter KeyData when transitMode is rawKeyData.');
         return false;
       case KeyDataTransitMode.keyDataThenRawKeyData:
+        assert((data.physical == 0 && data.logical == 0) ||
+               (data.physical != 0 && data.logical != 0));
         // Postpone key event dispatching until the handleRawKeyMessage.
-        _keyEventsSinceLastMessage.add(_eventFromData(data));
+        //
+        // Having 0 as the physical or logical ID indicates an empty key data,
+        // transmitted to ensure that the transit mode is correctly inferred.
+        if (data.physical != 0 && data.logical != 0) {
+          _keyEventsSinceLastMessage.add(_eventFromData(data));
+        }
         return false;
     }
   }
@@ -874,7 +881,7 @@ class KeyEventManager {
     for (final PhysicalKeyboardKey key in physicalKeysPressed.difference(_rawKeyboard.physicalKeysPressed)) {
       _keyEventsSinceLastMessage.add(KeyUpEvent(
         physicalKey: key,
-        logicalKey: _hardwareKeyboard.lookUpLayout(physicalKey)!,
+        logicalKey: _hardwareKeyboard.lookUpLayout(key)!,
         timeStamp: timeStamp,
         synthesized: true,
       ));
@@ -882,7 +889,7 @@ class KeyEventManager {
     for (final PhysicalKeyboardKey key in _rawKeyboard.physicalKeysPressed.difference(physicalKeysPressed)) {
       _keyEventsSinceLastMessage.add(KeyDownEvent(
         physicalKey: key,
-        logicalKey: _rawKeyboard.lookUpLayout(physicalKey)!,
+        logicalKey: _rawKeyboard.lookUpLayout(key)!,
         timeStamp: timeStamp,
         synthesized: true,
       ));
